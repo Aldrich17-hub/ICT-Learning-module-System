@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ · Solve the Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050d1a;
+      font-family: 'DM Sans', sans-serif;
+      color: #e2eaf4;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #fff, #00d4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .back-btn {
+      background: rgba(0,212,255,0.1);
+      border: 1px solid #00d4ff;
+      border-radius: 40px;
+      padding: 0.5rem 1.3rem;
+      color: #00d4ff;
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: #00d4ff;
+      color: #050d1a;
+    }
+    .game-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .code-section, .output-section {
+      background: rgba(13,30,48,0.85);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 20px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(0,212,255,0.2);
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .status-badge {
+      font-size: 0.7rem;
+      background: rgba(0,212,255,0.15);
+      border-radius: 30px;
+      padding: 0.2rem 0.6rem;
+      margin-left: 0.5rem;
+    }
+    textarea {
+      width: 100%;
+      height: 380px;
+      background: #0a1424;
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #e2eaf4;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #00d4ff;
+    }
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .run-btn {
+      background: linear-gradient(135deg, #00d4ff, #0068ff);
+      border: none;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .run-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .hint-btn {
+      background: rgba(245,158,11,0.2);
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #f59e0b;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .hint-btn:hover { background: rgba(245,158,11,0.4); }
+    .giveup-btn {
+      background: rgba(255,107,107,0.2);
+      border: 1px solid #ff6b6b;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ff6b6b;
+      cursor: pointer;
+    }
+    .giveup-btn:hover { background: rgba(255,107,107,0.4); }
+    .new-btn {
+      background: transparent;
+      border: 1px solid #00d4ff;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #00d4ff;
+      cursor: pointer;
+    }
+    .new-btn:hover { background: rgba(0,212,255,0.2); }
+    .output {
+      background: #0a1424;
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 380px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-y: auto;
+      max-height: 500px;
+    }
+    .error { color: #ff6b6b; font-weight: 500; }
+    .success { color: #51cf66; font-weight: 500; }
+    .warning { color: #f59e0b; }
+    .info { color: #74c0fc; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal-content {
+      background: #0d1e30;
+      border: 1px solid #00d4ff;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 550px;
+      margin: 1rem;
+      text-align: center;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+    }
+    .modal-content button {
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.8rem;
+      background: #00d4ff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .modal-content code {
+      background: #1e2a3a;
+      padding: 0.8rem;
+      display: block;
+      border-radius: 12px;
+      text-align: left;
+      margin: 1rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    @media (max-width: 900px) {
+      .game-panel { grid-template-columns: 1fr; }
+      .container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div class="logo">⚙️ C++</div>
+    <a href="solvinggame.html" class="back-btn">← Change Language</a>
+  </div>
+  <div class="game-panel">
+    <div class="code-section">
+      <div class="section-title">
+        <span>🔧 FIX THE CODE</span>
+        <span class="badge">fix & run</span>
+      </div>
+      <textarea id="codeEditor" spellcheck="false" placeholder="// C++ code with bugs — fix it and press RUN"></textarea>
+      <div class="button-group">
+        <button class="run-btn" id="runButton">▶ RUN CODE</button>
+        <button class="hint-btn" id="hintButton">💡 HINT</button>
+        <button class="giveup-btn" id="giveupButton">🏳️ GIVE UP</button>
+        <button class="new-btn" id="newButton">🎲 NEW</button>
+      </div>
+    </div>
+    <div class="output-section">
+      <div class="section-title">
+        <span>📟 OUTPUT & VALIDATION</span>
+        <span class="status-badge" id="statusBadge">waiting</span>
+      </div>
+      <div class="output" id="outputArea">// Click RUN to test your fixed C++ code</div>
+    </div>
+  </div>
+</div>
+
+<div id="hintModal" class="modal">
+  <div class="modal-content">
+    <h3>💡 DEBUG HINT</h3>
+    <p id="hintMessage" style="margin-top: 1rem;"></p>
+    <button onclick="closeModal()">Got it!</button>
+  </div>
+</div>
+
+<div id="answerModal" class="modal">
+  <div class="modal-content">
+    <h3>📖 SOLUTION</h3>
+    <div id="answerMessage" style="text-align: left;"></div>
+    <button onclick="closeAnswerModal()">Next Challenge →</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // C++ CHALLENGES — real beginner bugs with specific validation
+  // Enhanced with solved/unsolved status and detailed error tips
+  // ============================================================
+  const challenges = [
+    {
+      broken: `// 💣 BUG: Missing semicolon after cout
+cout << "Hello World"`,
+      fixed: `cout << "Hello World";`,
+      hint: "Every statement in C++ must end with a semicolon (;). Add one after cout!",
+      expectedOutput: "Hello World",
+      validation: (code) => {
+        const cleaned = code.replace(/\/\/.*$/gm, '').trim();
+        return cleaned.includes('cout << "Hello World";') && cleaned.endsWith(';');
+      },
+      specificErrorHint: "Missing semicolon! Add ';' after 'cout << \"Hello World\"'"
+    },
+    {
+      broken: `// 💣 BUG: Missing #include and using namespace
+#include <iostream>
+cout << "Hello C++";`,
+      fixed: `#include <iostream>
+using namespace std;
+cout << "Hello C++";`,
+      hint: "You need 'using namespace std;' after #include to use cout, or write std::cout",
+      expectedOutput: "Hello C++",
+      validation: (code) => {
+        return code.includes('#include <iostream>') && 
+               (code.includes('using namespace std;') || code.includes('std::cout'));
+      },
+      specificErrorHint: "Missing 'using namespace std;' or add 'std::' before cout"
+    },
+    {
+      broken: `// 💣 BUG: Using '=' for string comparison
+string color1 = "red";
+string color2 = "red";
+if (color1 = color2) {
+    cout << "Match";
+} else {
+    cout << "No match";
+}`,
+      fixed: `string color1 = "red";
+string color2 = "red";
+if (color1 == color2) {
+    cout << "Match";
+} else {
+    cout << "No match";
+}`,
+      hint: "In C++, use '==' for comparison, not '=' (assignment). = sets a value, == checks equality.",
+      expectedOutput: "Match",
+      validation: (code) => {
+        return code.includes('if (color1 == color2)') && !code.includes('if (color1 = color2)');
+      },
+      specificErrorHint: "Use '==' for comparison, not '=' (assignment)"
+    },
+    {
+      broken: `// 💣 BUG: Missing return statement
+int add(int a, int b) {
+    int sum = a + b;
+    sum;
+}`,
+      fixed: `int add(int a, int b) {
+    return a + b;
+}`,
+      hint: "Functions that return 'int' must have a 'return' statement with a value.",
+      expectedOutput: "8",
+      validation: (code) => {
+        return code.includes('return') && (code.includes('a + b') || code.includes('sum'));
+      },
+      specificErrorHint: "Add 'return a + b;' instead of just 'sum;'"
+    },
+    {
+      broken: `// 💣 BUG: Array index starts at 0
+int numbers[] = {10, 20, 30};
+cout << numbers[3];`,
+      fixed: `int numbers[] = {10, 20, 30};
+cout << numbers[2];`,
+      hint: "Arrays start at index 0. Last valid index is length-1 (2 for 3 elements).",
+      expectedOutput: "30",
+      validation: (code) => {
+        return code.includes('numbers[2]') && !code.includes('numbers[3]');
+      },
+      specificErrorHint: "Array index out of bounds! Change numbers[3] to numbers[2]"
+    },
+    {
+      broken: `// 💣 BUG: Missing double quotes
+string message = Hello World;
+cout << message;`,
+      fixed: `string message = "Hello World";
+cout << message;`,
+      hint: "String literals must be enclosed in double quotes \" \" in C++.",
+      expectedOutput: "Hello World",
+      validation: (code) => {
+        return code.includes('"Hello World"') && !code.includes('= Hello World');
+      },
+      specificErrorHint: "Add double quotes: \"Hello World\" instead of Hello World"
+    },
+    {
+      broken: `// 💣 BUG: For loop semicolon placement
+for (int i = 0 i < 5 i++) {
+    cout << i;
+}`,
+      fixed: `for (int i = 0; i < 5; i++) {
+    cout << i;
+}`,
+      hint: "For loop needs semicolons between initialization, condition, and increment: for(init; condition; increment)",
+      expectedOutput: "01234",
+      validation: (code) => {
+        return code.includes('for (int i = 0; i < 5; i++)') && 
+               code.includes(';') && 
+               !code.includes('i < 5 i++');
+      },
+      specificErrorHint: "Add semicolons: for (int i = 0; i < 5; i++)"
+    },
+    {
+      broken: `// 💣 BUG: Using single quotes for string
+cout << 'Hello';`,
+      fixed: `cout << "Hello";`,
+      hint: "Single quotes '' are for single characters. Double quotes \"\" are for strings.",
+      expectedOutput: "Hello",
+      validation: (code) => {
+        return code.includes('"Hello"') && !code.includes("'Hello'");
+      },
+      specificErrorHint: "Use double quotes \"Hello\" instead of single quotes"
+    },
+    {
+      broken: `// 💣 BUG: endl typo
+cout << "Line 1" << end1;
+cout << "Line 2";`,
+      fixed: `cout << "Line 1" << endl;
+cout << "Line 2";`,
+      hint: "It's 'endl' (end L) not 'end1' (end one). Watch for letter vs number!",
+      expectedOutput: "Line 1\nLine 2",
+      validation: (code) => {
+        return code.includes('endl') && !code.includes('end1');
+      },
+      specificErrorHint: "Fix typo: 'end1' should be 'endl' (letter L, not number 1)"
+    },
+    {
+      broken: `// 💣 BUG: Missing #include for cin/cout
+int age;
+cin >> age;
+cout << "Age: " << age;`,
+      fixed: `#include <iostream>
+using namespace std;
+int age;
+cin >> age;
+cout << "Age: " << age;`,
+      hint: "Don't forget #include <iostream> and using namespace std; for cin/cout to work!",
+      expectedOutput: "Age: 20",
+      validation: (code) => {
+        return code.includes('#include <iostream>') && 
+               (code.includes('using namespace std;') || code.includes('std::cin'));
+      },
+      specificErrorHint: "Add '#include <iostream>' and 'using namespace std;' at the top"
+    },
+    {
+      broken: `// 💣 BUG: Uninitialized variable
+int count;
+count = count + 5;
+cout << count;`,
+      fixed: `int count = 0;
+count = count + 5;
+cout << count;`,
+      hint: "Local variables contain garbage values until initialized. Set count = 0 first!",
+      expectedOutput: "5",
+      validation: (code) => {
+        return code.includes('int count = 0;') || code.includes('int count{0}');
+      },
+      specificErrorHint: "Initialize count: 'int count = 0;' before using it"
+    }
+  ];
+
+  let currentChallenge = null;
+  let currentSolved = false;
+
+  function loadNewChallenge() {
+    const randomIndex = Math.floor(Math.random() * challenges.length);
+    currentChallenge = { ...challenges[randomIndex] };
+    currentSolved = false;
+    document.getElementById('codeEditor').value = currentChallenge.broken;
+    document.getElementById('outputArea').innerHTML = '// New challenge! Find the C++ bug and click RUN';
+    document.getElementById('statusBadge').innerHTML = 'unsolved';
+    document.getElementById('statusBadge').style.color = "#f59e0b";
+    document.getElementById('statusBadge').style.background = "rgba(245,158,11,0.2)";
+  }
+
+  function compileAndValidate(code) {
+    const errors = [];
+    
+    // Check for missing semicolon (basic heuristic)
+    const lines = code.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line && !line.endsWith('{') && !line.endsWith('}') && !line.endsWith(';') && 
+          !line.startsWith('#') && !line.includes('if') && !line.includes('for') && 
+          !line.includes('while') && line !== '' && !line.startsWith('//') && !line.includes('else')) {
+        if (line.includes('cout') || line.includes('cin') || line.match(/[a-zA-Z_][a-zA-Z0-9_]*\s*=/)) {
+          errors.push('Missing semicolon at end of statement');
+          break;
+        }
+      }
+    }
+    
+    // Check for missing #include
+    if ((code.includes('cout') || code.includes('cin')) && !code.includes('#include <iostream>')) {
+      errors.push('Missing #include <iostream> for cout/cin');
+    }
+    
+    // Check for missing using namespace
+    if ((code.includes('cout') || code.includes('cin')) && 
+        !code.includes('using namespace std;') && !code.includes('std::cout') && !code.includes('std::cin') && code.includes('#include')) {
+      errors.push('Missing "using namespace std;" or use std::cout');
+    }
+    
+    return errors;
+  }
+
+  function runCode() {
+    if (!currentChallenge) {
+      loadNewChallenge();
+      return;
+    }
+    
+    const code = document.getElementById('codeEditor').value;
+    const outputDiv = document.getElementById('outputArea');
+    const statusSpan = document.getElementById('statusBadge');
+    
+    // Compilation check
+    const compileErrors = compileAndValidate(code);
+    
+    // Use challenge validation
+    let isStructurallyCorrect = false;
+    try {
+      isStructurallyCorrect = currentChallenge.validation(code);
+    } catch(e) {
+      isStructurallyCorrect = false;
+    }
+    
+    const hasCompileErrors = compileErrors.length > 0;
+    
+    if (!hasCompileErrors && isStructurallyCorrect) {
+      currentSolved = true;
+      let simulatedOutput = currentChallenge.expectedOutput;
+      if (currentChallenge.expectedOutput === "01234") simulatedOutput = "01234";
+      if (currentChallenge.expectedOutput === "Line 1\nLine 2") simulatedOutput = "Line 1\nLine 2";
+      if (currentChallenge.expectedOutput === "Age: 20") simulatedOutput = "Age: 20";
+      
+      outputDiv.innerHTML = `<span class="success">✅ CORRECT! 🎉 You fixed the C++ bug!</span>\n\n📤 Program Output:\n${simulatedOutput}\n\n<span class="success">✨ Perfect! Click NEW for another challenge.</span>`;
+      statusSpan.innerHTML = '✓ SOLVED';
+      statusSpan.style.color = "#51cf66";
+      statusSpan.style.background = "rgba(81,207,102,0.2)";
+    } else {
+      currentSolved = false;
+      if (hasCompileErrors) {
+        outputDiv.innerHTML = `<span class="error">❌ COMPILATION ERROR(S):</span>\n\n${compileErrors.map(e => `• ${e}`).join('\n')}\n\n<span class="info">💡 ${currentChallenge.specificErrorHint || currentChallenge.hint}</span>`;
+      } else {
+        outputDiv.innerHTML = `<span class="warning">❌ NOT YET CORRECT</span>\n\n📤 Code structure doesn't match expected solution.\n\n🎯 Expected output: "${currentChallenge.expectedOutput}"\n\n<span class="info">💡 ${currentChallenge.specificErrorHint || currentChallenge.hint}</span>`;
+      }
+      statusSpan.innerHTML = '✗ FAILED';
+      statusSpan.style.color = "#ff6b6b";
+      statusSpan.style.background = "rgba(255,107,107,0.2)";
+    }
+  }
+
+  function showHint() {
+    if (currentChallenge) {
+      document.getElementById('hintMessage').innerHTML = `<strong style="color:#fbbf24;">⚙️ C++ DEBUGGER SAYS:</strong><br><br>${currentChallenge.hint}<br><br><span class="info">🔍 Look at the line with the // 💣 BUG comment for context.</span>`;
+      document.getElementById('hintModal').style.display = 'flex';
+    }
+  }
+
+  function giveUp() {
+    if (currentChallenge) {
+      document.getElementById('answerMessage').innerHTML = `
+        <strong>✅ Corrected C++ code:</strong>
+        <code>${escapeHtml(currentChallenge.fixed)}</code>
+        <strong>📤 Expected output:</strong>
+        <code style="background:#1e2a3a; padding:0.5rem; margin-top:0.5rem;">${currentChallenge.expectedOutput}</code>
+        <strong>🔍 What was wrong:</strong>
+        <p style="margin-top:0.5rem;">${currentChallenge.hint}</p>
+        <p class="info">Study the fix and try the next challenge!</p>
+      `;
+      document.getElementById('answerModal').style.display = 'flex';
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/\n/g, '<br>');
+  }
+
+  function closeModal() {
+    document.getElementById('hintModal').style.display = 'none';
+  }
+
+  function closeAnswerModal() {
+    document.getElementById('answerModal').style.display = 'none';
+    loadNewChallenge();
+  }
+
+  // Set up event listeners
+  function setupEventListeners() {
+    const runBtn = document.getElementById('runButton');
+    const hintBtn = document.getElementById('hintButton');
+    const giveupBtn = document.getElementById('giveupButton');
+    const newBtn = document.getElementById('newButton');
+    
+    if (runBtn) {
+      const newRunBtn = runBtn.cloneNode(true);
+      runBtn.parentNode.replaceChild(newRunBtn, runBtn);
+      newRunBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        runCode();
+      });
+    }
+    
+    if (hintBtn) {
+      const newHintBtn = hintBtn.cloneNode(true);
+      hintBtn.parentNode.replaceChild(newHintBtn, hintBtn);
+      newHintBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showHint();
+      });
+    }
+    
+    if (giveupBtn) {
+      const newGiveupBtn = giveupBtn.cloneNode(true);
+      giveupBtn.parentNode.replaceChild(newGiveupBtn, giveupBtn);
+      newGiveupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        giveUp();
+      });
+    }
+    
+    if (newBtn) {
+      const newNewBtn = newBtn.cloneNode(true);
+      newBtn.parentNode.replaceChild(newNewBtn, newBtn);
+      newNewBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loadNewChallenge();
+      });
+    }
+  }
+
+  // Initialize
+  window.addEventListener('DOMContentLoaded', () => {
+    loadNewChallenge();
+    setupEventListeners();
+  });
+  
+  // Expose functions as fallback
+  window.runCode = runCode;
+  window.showHint = showHint;
+  window.giveUp = giveUp;
+  window.loadNewChallenge = loadNewChallenge;
+  window.closeModal = closeModal;
+  window.closeAnswerModal = closeAnswerModal;
+</script>
+</body>
+</html>

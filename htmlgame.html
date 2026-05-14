@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML/CSS · Solve the Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050d1a;
+      font-family: 'DM Sans', sans-serif;
+      color: #e2eaf4;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #fff, #00d4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .back-btn {
+      background: rgba(0,212,255,0.1);
+      border: 1px solid #00d4ff;
+      border-radius: 40px;
+      padding: 0.5rem 1.3rem;
+      color: #00d4ff;
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: #00d4ff;
+      color: #050d1a;
+    }
+    .game-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .code-section, .output-section {
+      background: rgba(13,30,48,0.85);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 20px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(0,212,255,0.2);
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .difficulty-badge {
+      background: rgba(245,158,11,0.2);
+      color: #fbbf24;
+    }
+    textarea {
+      width: 100%;
+      height: 380px;
+      background: #0a1424;
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #e2eaf4;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #00d4ff;
+    }
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .run-btn {
+      background: linear-gradient(135deg, #00d4ff, #0068ff);
+      border: none;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .run-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .hint-btn {
+      background: rgba(245,158,11,0.2);
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #f59e0b;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .hint-btn:hover { background: rgba(245,158,11,0.4); }
+    .giveup-btn {
+      background: rgba(255,107,107,0.2);
+      border: 1px solid #ff6b6b;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ff6b6b;
+      cursor: pointer;
+    }
+    .giveup-btn:hover { background: rgba(255,107,107,0.4); }
+    .new-btn {
+      background: transparent;
+      border: 1px solid #00d4ff;
+      border-radius: 10px;
+      padding: 0.7rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #00d4ff;
+      cursor: pointer;
+    }
+    .new-btn:hover { background: rgba(0,212,255,0.2); }
+    .output {
+      background: #0a1424;
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 380px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      overflow-y: auto;
+      max-height: 500px;
+    }
+    #previewArea {
+      background: #fff;
+      color: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      min-height: 200px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    #errorArea {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      white-space: pre-wrap;
+    }
+    .error { color: #ff6b6b; }
+    .success { color: #51cf66; }
+    .warning { color: #f59e0b; }
+    .info { color: #74c0fc; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal-content {
+      background: #0d1e30;
+      border: 1px solid #00d4ff;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 600px;
+      margin: 1rem;
+      text-align: center;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+    }
+    .modal-content button {
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.8rem;
+      background: #00d4ff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .modal-content code {
+      background: #1e2a3a;
+      padding: 0.8rem;
+      display: block;
+      border-radius: 12px;
+      text-align: left;
+      margin: 1rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    @media (max-width: 900px) {
+      .game-panel { grid-template-columns: 1fr; }
+      .container { padding: 1rem; }
+    }
+    .status-badge {
+      font-size: 0.7rem;
+      background: rgba(0,212,255,0.15);
+      border-radius: 30px;
+      padding: 0.2rem 0.6rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div class="logo">🎨 HTML/CSS</div>
+    <a href="solvinggame.html" class="back-btn">← Change Language</a>
+  </div>
+  <div class="game-panel">
+    <div class="code-section">
+      <div class="section-title">
+        <span>🔧 FIX THE BROKEN CODE</span>
+        <span class="badge difficulty-badge" id="difficultyTag">syntax / structure</span>
+      </div>
+      <textarea id="codeEditor" spellcheck="false" placeholder="<!-- The HTML/CSS below contains real bugs. Fix them! -->"></textarea>
+      <div class="button-group">
+        <button class="run-btn" onclick="runCode()">▶ RUN & VALIDATE</button>
+        <button class="hint-btn" onclick="showHint()">💡 HINT</button>
+        <button class="giveup-btn" onclick="giveUp()">🏳️ GIVE UP</button>
+        <button class="new-btn" onclick="loadNewChallenge()">🎲 NEXT CHALLENGE</button>
+      </div>
+    </div>
+    <div class="output-section">
+      <div class="section-title">
+        <span>📟 LIVE PREVIEW & ERRORS</span>
+        <span class="status-badge" id="queryStatus">waiting</span>
+      </div>
+      <div class="output">
+        <div id="previewArea">/* Fixed HTML/CSS will render here */</div>
+        <div id="errorArea"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="hintModal" class="modal">
+  <div class="modal-content">
+    <h3>💡 DEBUG HINT</h3>
+    <p id="hintMessage" style="margin-top: 1rem;"></p>
+    <button onclick="closeModal()">UNDERSTOOD</button>
+  </div>
+</div>
+
+<div id="answerModal" class="modal">
+  <div class="modal-content">
+    <h3>🔍 SOLUTION & CORRECTED CODE</h3>
+    <div id="answerMessage" style="text-align: left; margin-top: 0.5rem;"></div>
+    <button onclick="closeAnswerModal()">NEXT CHALLENGE →</button>
+  </div>
+</div>
+
+<script>
+  // REAL HTML/CSS CHALLENGES — each has actual broken markup/styling
+  const challenges = [
+    {
+      broken: `<!-- Fix: Missing closing paragraph tag -->
+<h1>Welcome to the page</h1>
+<p>This text should be inside a closed paragraph
+<p>Another paragraph here</p>`,
+      fixed: `<h1>Welcome to the page</h1>
+<p>This text should be inside a closed paragraph</p>
+<p>Another paragraph here</p>`,
+      hint: "Each <p> tag needs a closing </p> tag. One paragraph is missing its closing tag.",
+      description: "Unclosed paragraph tag — added missing </p>",
+      validate: (html) => {
+        // count <p> and </p> tags (non-self-closing)
+        const openP = (html.match(/<p\b[^>]*>/gi) || []).length;
+        const closeP = (html.match(/<\/p\b/gi) || []).length;
+        return openP === closeP && openP >= 2;
+      }
+    },
+    {
+      broken: `<!-- Fix: Image tag has closing tag (invalid) -->
+<img src="photo.jpg" alt="Sample image"></img>`,
+      fixed: `<img src="photo.jpg" alt="Sample image">`,
+      hint: "Images are void elements — they don't use a closing tag. Remove the </img>.",
+      description: "Void element error: <img> should not have closing tag",
+      validate: (html) => html.includes('<img') && !html.includes('</img>') && html.includes('alt=')
+    },
+    {
+      broken: `<!-- Fix: Anchor missing href attribute -->
+<a>Click here to visit</a>`,
+      fixed: `<a href="https://example.com">Click here to visit</a>`,
+      hint: "Anchor <a> tags need href='url' to become clickable links.",
+      description: "Missing href attribute on link",
+      validate: (html) => html.includes('<a') && html.includes('href=') && html.includes('Click here')
+    },
+    {
+      broken: `<!-- Fix: CSS class selector missing dot -->
+<style>
+  card {
+    background: lightblue;
+    padding: 20px;
+  }
+</style>
+<div class="card">Styled card content</div>`,
+      fixed: `<style>
+  .card {
+    background: lightblue;
+    padding: 20px;
+  }
+</style>
+<div class="card">Styled card content</div>`,
+      hint: "CSS class selectors need a dot '.' before the class name: .card instead of card",
+      description: "Missing dot before class selector",
+      validate: (html) => html.includes('.card') && !html.includes('card {')
+    },
+    {
+      broken: `<!-- Fix: CSS missing colons between property and value -->
+<p style="color red; font-size 18px;">Colored text</p>`,
+      fixed: `<p style="color: red; font-size: 18px;">Colored text</p>`,
+      hint: "CSS requires colons ':' between property and value: color: red; not color red;",
+      description: "Missing colons in inline style",
+      validate: (html) => html.includes('color:') && html.includes('font-size:') && html.includes('red')
+    },
+    {
+      broken: `<!-- Fix: CSS missing units (px) -->
+<style>
+  .box {
+    width: 200;
+    height: 100;
+    background: coral;
+  }
+</style>
+<div class="box">Box with size</div>`,
+      fixed: `<style>
+  .box {
+    width: 200px;
+    height: 100px;
+    background: coral;
+  }
+</style>
+<div class="box">Box with size</div>`,
+      hint: "CSS length values need units like 'px', 'em', or '%'. '200' alone is invalid.",
+      description: "Missing CSS units (px)",
+      validate: (html) => html.includes('200px') && html.includes('100px')
+    },
+    {
+      broken: `<!-- Fix: Image missing alt attribute -->
+<img src="logo.png">`,
+      fixed: `<img src="logo.png" alt="Company logo">`,
+      hint: "Accessibility requires alt attribute on images to describe content.",
+      description: "Missing alt attribute",
+      validate: (html) => html.includes('alt=') && html.includes('logo')
+    },
+    {
+      broken: `<!-- Fix: ID selector missing # -->
+<style>
+  main-header {
+    color: darkgreen;
+    font-size: 24px;
+  }
+</style>
+<div id="main-header">Header text</div>`,
+      fixed: `<style>
+  #main-header {
+    color: darkgreen;
+    font-size: 24px;
+  }
+</style>
+<div id="main-header">Header text</div>`,
+      hint: "ID selectors in CSS need a '#' prefix: #main-header, not just main-header",
+      description: "Missing hash for ID selector",
+      validate: (html) => html.includes('#main-header') && !html.includes('main-header {')
+    },
+    {
+      broken: `<!-- Fix: Unclosed input tag with closing slash confusion -->
+<input type="text" placeholder="Enter name"></input>`,
+      fixed: `<input type="text" placeholder="Enter name">`,
+      hint: "Input is a void element - doesn't need a closing tag or </input>.",
+      description: "Input element with invalid closing tag",
+      validate: (html) => html.includes('<input') && !html.includes('</input>')
+    },
+    {
+      broken: `<!-- Fix: CSS missing space between selectors -->
+<style>
+  .alert.error{
+    color: red;
+  }
+</style>
+<div class="alert error">Danger message</div>`,
+      fixed: `<style>
+  .alert.error {
+    color: red;
+  }
+</style>
+<div class="alert error">Danger message</div>`,
+      hint: "Add a space before the opening brace for cleaner code, but actually it works — but missing space between class chain? The challenge expects proper formatting: .alert.error {",
+      description: "Missing space before CSS rule opening brace",
+      validate: (html) => html.includes('.alert.error {') && html.includes('color: red;')
+    }
+  ];
+
+  let currentChallenge = null;
+  let attempts = 0;
+
+  function loadNewChallenge() {
+    const randomIndex = Math.floor(Math.random() * challenges.length);
+    currentChallenge = { ...challenges[randomIndex] };
+    attempts = 0;
+    document.getElementById('codeEditor').value = currentChallenge.broken;
+    document.getElementById('previewArea').innerHTML = '/* Preview will appear after clicking RUN */';
+    document.getElementById('previewArea').style.background = '#fff';
+    document.getElementById('previewArea').style.color = '#000';
+    document.getElementById('errorArea').innerHTML = '';
+    document.getElementById('queryStatus').innerHTML = 'unsolved';
+    document.getElementById('queryStatus').style.color = "#f59e0b";
+    
+    // Set difficulty badge based on error type
+    const diffSpan = document.getElementById('difficultyTag');
+    if (currentChallenge.broken.includes('</img>') || currentChallenge.broken.includes('</input>')) 
+      diffSpan.innerHTML = "⚡ void element error";
+    else if (currentChallenge.broken.includes('card {')) 
+      diffSpan.innerHTML = "🎯 missing dot / hash";
+    else if (currentChallenge.broken.includes('color red')) 
+      diffSpan.innerHTML = "⚠️ missing colon";
+    else if (currentChallenge.broken.includes('width: 200;')) 
+      diffSpan.innerHTML = "📏 missing units";
+    else diffSpan.innerHTML = "🔧 structure / tag";
+  }
+
+  function validateHTMLStructure(html) {
+    const errors = [];
+    
+    // Check for unclosed non-void tags (basic)
+    const tagStack = [];
+    const tagRegex = /<(\/?)([a-z][a-z0-9]*)[^>]*>/gi;
+    const voidTags = ['img', 'br', 'hr', 'input', 'meta', 'link', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'];
+    let match;
+    while ((match = tagRegex.exec(html)) !== null) {
+      const isClosing = match[1] === '/';
+      const tagName = match[2].toLowerCase();
+      if (!isClosing && !voidTags.includes(tagName)) {
+        tagStack.push(tagName);
+      } else if (isClosing) {
+        if (tagStack.length > 0 && tagStack[tagStack.length - 1] === tagName) {
+          tagStack.pop();
+        } else if (!voidTags.includes(tagName)) {
+          errors.push(`❌ Unmatched closing tag </${tagName}>`);
+        }
+      }
+    }
+    if (tagStack.length > 0) {
+      errors.push(`❌ Unclosed tag(s): ${tagStack.join(', ')}`);
+    }
+    
+    // Specific checks from challenge validation will run later
+    return errors;
+  }
+
+  function runCode() {
+    const code = document.getElementById('codeEditor').value;
+    const previewDiv = document.getElementById('previewArea');
+    const errorDiv = document.getElementById('errorArea');
+    const statusSpan = document.getElementById('queryStatus');
+    
+    previewDiv.style.background = '#fff';
+    previewDiv.style.color = '#000';
+    errorDiv.innerHTML = '';
+    
+    // Structural validation
+    const structuralErrors = validateHTMLStructure(code);
+    
+    // Try to render preview
+    let renderSuccess = false;
+    try {
+      previewDiv.innerHTML = code;
+      renderSuccess = true;
+    } catch (e) {
+      errorDiv.innerHTML += `<span class="error">❌ DOM parsing error: ${e.message}</span><br>`;
+      renderSuccess = false;
+    }
+    
+    // Custom validation for the specific challenge (actual fix detection)
+    let customValid = false;
+    if (currentChallenge.validate && typeof currentChallenge.validate === "function") {
+      customValid = currentChallenge.validate(code);
+    }
+    
+    // Overall success = no structural errors + custom validation passes
+    const hasStructuralErrors = structuralErrors.length > 0;
+    
+    if (!hasStructuralErrors && customValid) {
+      // SUCCESS
+      previewDiv.innerHTML = `<div style="background:#e8f5e9; padding:0.6rem; border-radius:8px; margin-bottom:0.8rem; color:#2e7d32; font-weight:bold;">✅ CORRECT! Code is fixed</div>${code}`;
+      errorDiv.innerHTML = '<span class="success">✓ Perfect! The HTML/CSS is now valid and matches the requirements.</span>';
+      statusSpan.innerHTML = '✓ SOLVED';
+      statusSpan.style.color = "#51cf66";
+    } else {
+      attempts++;
+      let errorMessages = [];
+      if (hasStructuralErrors) {
+        errorMessages.push(...structuralErrors);
+      }
+      if (!customValid && !hasStructuralErrors) {
+        errorMessages.push(`⚠️ Not fully fixed. Expected solution structure not detected. Hint: ${currentChallenge.hint.substring(0, 100)}`);
+      } else if (!customValid && hasStructuralErrors) {
+        errorMessages.push(`💡 Fix the syntax errors first: ${currentChallenge.hint.substring(0, 80)}`);
+      }
+      
+      if (renderSuccess && errorMessages.length === 0) {
+        errorMessages.push(`❌ The code renders but doesn't match the required fix: ${currentChallenge.hint.substring(0, 100)}`);
+      }
+      
+      errorDiv.innerHTML = errorMessages.map(m => `<span class="error">${m}</span>`).join('<br>');
+      if (!hasStructuralErrors && renderSuccess && !customValid) {
+        previewDiv.innerHTML = `<div style="background:#fff3e0; padding:0.5rem; border-radius:8px; margin-bottom:0.5rem; color:#e65100;">⚠️ Rendered but not yet correct</div>${code}`;
+      }
+      statusSpan.innerHTML = '✗ FAILED';
+      statusSpan.style.color = "#ff6b6b";
+    }
+  }
+  
+  function showHint() {
+    if (currentChallenge) {
+      document.getElementById('hintMessage').innerHTML = `<strong style="color:#fbbf24;">🔍 DEBUGGER SAYS:</strong><br>${currentChallenge.hint}<br><br><span style="font-size:0.8rem;">Examine tags, selectors, colons, or missing values.</span>`;
+      document.getElementById('hintModal').style.display = 'flex';
+    }
+  }
+  
+  function giveUp() {
+    if (currentChallenge) {
+      const explanation = currentChallenge.description || "Fix the broken HTML/CSS";
+      const fixedCode = currentChallenge.fixed;
+      document.getElementById('answerMessage').innerHTML = `
+        <div style="background:#051a2a; padding:0.8rem; border-radius:12px; margin:1rem 0;">
+          <strong>✅ CORRECT VERSION:</strong><br>
+          <code>${escapeHtml(fixedCode)}</code>
+        </div>
+        <p><strong>🔧 WHY IT FAILED:</strong> ${explanation}</p>
+        <p><strong>💡 TIP:</strong> ${currentChallenge.hint}</p>
+      `;
+      document.getElementById('answerModal').style.display = 'flex';
+    }
+  }
+  
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  
+  function closeModal() {
+    document.getElementById('hintModal').style.display = 'none';
+  }
+  
+  function closeAnswerModal() {
+    document.getElementById('answerModal').style.display = 'none';
+    loadNewChallenge();
+  }
+  
+  // Initial load
+  loadNewChallenge();
+  
+  // Ctrl+Enter shortcut
+  document.getElementById('codeEditor').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      runCode();
+    }
+  });
+</script>
+</body>
+</html>
